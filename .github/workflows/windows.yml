@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release32
-          path: ../release32
+          path: ${{ runner.workspace }}/release32
 
       - name: Build Win64
         if: ${{ matrix.bitness == 64 }}
@@ -79,4 +79,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release64
-          path: ../release64
+          path: ${{ runner.workspace }}/release64
