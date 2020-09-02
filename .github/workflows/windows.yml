@@ -1,0 +1,78 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Windows build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop branch
+on:
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-2016
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      #- name: Download QT
+      #  run: curl -L http://download.qt-project.org/official_releases/online_installers/qt-unified-windows-x86-online.exe --output qt-installer.exe
+
+      #- name: Install QT
+      #  run: ./qt-installer.exe --script ./tools/qt_installer_noninteractive.qs
+
+      - name: Install Qt 32
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '5.12.7'
+          host: 'windows'
+          arch: 'win32_msvc2017'
+          dir: 'C:/'
+
+      - name: Install Qt 64
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '5.12.7'
+          host: 'windows'
+          arch: 'win64_msvc2017_64'
+          dir: 'C:/'
+
+      - name: Download libgit2
+        run: curl -fsSL https://github.com/libgit2/libgit2/archive/v0.28.1.zip -o libgit2.zip && 7z x libgit2.zip && mv libgit2-0.28.1 ../libgit2
+      
+      - name: Build libgit2 32
+        run: mkdir ../libgit2/build32 && cd ../libgit2/build32 && cmake -G "Visual Studio 15 2017" .. && cmake --build . --config Release
+
+      - name: Build libgit2 64
+        run: mkdir ../libgit2/build64 && cd ../libgit2/build64 && cmake -G "Visual Studio 15 2017 Win64" .. && cmake --build . --config Release
+
+      - name: Download Boost
+        run: cd .. && curl -LO https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.bz2 && tar xjf boost_1_70_0.tar.bz2
+      
+      - name: Build Win32
+        shell: cmd
+        run: |
+          CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat" -host_arch=amd64 -arch=x86
+          CALL tools\release_fritzing.bat 0.9.6 32 2017
+
+      - name: Build Win64
+        shell: cmd
+        run: |
+          CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat" -host_arch=amd64 -arch=amd64
+          CALL tools\release_fritzing.bat 0.9.6 64 2017
+          
+      - name: Upload win32 build
+        uses: actions/upload-artifact@v2
+        with:
+          name: release32
+          path: ../release32
+          
+      - name: Upload win64 build
+        uses: actions/upload-artifact@v2
+        with:
+          name: release64
+          path: ../release64
