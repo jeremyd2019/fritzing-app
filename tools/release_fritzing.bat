@@ -58,7 +58,7 @@ IF %2==64 (
 	    ) ELSE IF %3==2015 (
 		set QTBIN=C:\Qt\5.6\msvc2015\bin
 	    ) ELSE IF %3==2017 (
-		set QTBIN=C:\Qt\5.12.3\msvc2017\bin
+		set QTBIN=C:\Qt\5.12.7\msvc2017\bin
 	    )
 		set arch=.
 	) ELSE (
@@ -170,7 +170,7 @@ cd translations
 for /f "usebackq delims=;" %%A in (`dir /b *.qm`) do If %%~zA LSS 1024 del "%%A"
 cd %CURRENTDIR%
 
-IF %2==32 (
+IF %2==32x (
 	echo make the executable compatible with windows xp
 	"%VCINSTALLDIR%bin\editbin.exe" %DESTDIR%\deploy\Fritzing.exe /SUBSYSTEM:WINDOWS,5.01 /OSVERSION:5.1 || exit /b 3
 )
