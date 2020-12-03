@@ -212,7 +212,7 @@ const QString FolderUtils::libraryPath()
 
 const QString FolderUtils::applicationDirPath() {
 	if (m_appPath.isEmpty()) {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(__MINGW32__)
 		m_appPath = QCoreApplication::applicationDirPath();
 #else
 		// look in standard Fritzing location (applicationDirPath and parent folders) then in standard linux locations
@@ -224,6 +224,9 @@ const QString FolderUtils::applicationDirPath() {
 
 #ifdef Q_OS_MAC
 			candidates.append(dir.absolutePath() + "/Resources");
+#endif
+#ifdef __MINGW32__
+			candidates.append(QDir::cleanPath(dir.absolutePath() + "/share/fritzing"));
 #endif
 			candidates.append(dir.absolutePath());
 			if (dir.cdUp()) {
