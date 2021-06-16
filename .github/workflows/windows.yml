@@ -33,7 +33,7 @@ jobs:
         run: cd .. && curl -LO https://boostorg.jfrog.io/artifactory/main/release/1.70.0/source/boost_1_70_0.tar.bz2 && tar xjf boost_1_70_0.tar.bz2
 
       - name: Download libgit2
-        run: curl -fsSL https://github.com/libgit2/libgit2/archive/v0.28.1.zip -o libgit2.zip && 7z x libgit2.zip && mv libgit2-0.28.1 ../libgit2
+        run: curl -fsSL https://github.com/libgit2/libgit2/archive/v1.1.0.zip -o libgit2.zip && 7z x libgit2.zip && mv libgit2-1.1.0 ../libgit2
 
       - name: Build libgit2
         run: mkdir ../libgit2/build${{ matrix.bitness }} && cd ../libgit2/build${{ matrix.bitness }} && cmake -G "Visual Studio 15 2017${{ matrix.bitness == 64 && ' Win64' || '' }}" .. && cmake --build . --config Release
